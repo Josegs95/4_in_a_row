@@ -1,32 +1,33 @@
 package main.java.view;
 
+import main.java.model.BoardModel;
+import main.java.model.Piece;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
-public class MainWindow extends JFrame {
-    private String title;
+public class BoardView extends JFrame {
+    private BoardModel model;
+    private JPanel pnlBoard;
 
-    public MainWindow(String title){
+    public BoardView(String title, BoardModel model){
         super(title);
-        this.title = title;
+        this.model = model;
 
         init();
     }
 
-    private void init(){
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    void init(){
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(600, 550);
         setLocationRelativeTo(null);
 
-        JPanel pnlBoard = new JPanel(
+        pnlBoard = new JPanel(
                 new MigLayout("wrap 7, fill, debug", "[fill]", "[fill]"));
         for (int i = 0; i < 42; i++){
             JPanel panel = new JPanel();
-            panel.setBackground(i % 2 == 0 ? Color.RED : Color.YELLOW);
+//            panel.setBackground(i % 2 == 0 ? Color.RED : Color.YELLOW);
 
             pnlBoard.add(panel);
         }
@@ -64,6 +65,33 @@ public class MainWindow extends JFrame {
         pnlButton.add(btnResetGame, "wrap, grow");
         pnlButton.add(btnResetWinCount, "grow");
 
+        printPieces();
         //pack();
+    }
+
+    private void printPieces(){
+        Piece[][] board = model.getBoard();
+        for (int i = 0; i < pnlBoard.getComponents().length; i++){
+            int y = i / board[0].length;
+            int x = i % board[0].length;
+
+            try{
+                JPanel panel = (JPanel) pnlBoard.getComponent(i);
+
+                if (board[y][x] == null){
+                    panel.setBackground(Color.WHITE);
+                    continue;
+                }
+
+                switch (board[y][x]){
+                    case RED -> panel.setBackground(Color.RED);
+                    case YELLOW -> panel.setBackground(Color.YELLOW);
+                }
+            } catch (Exception e) {
+                System.out.println("i: " + i);
+                System.out.println("x: " + x);
+                System.out.println("y: " + y);
+            }
+        }
     }
 }

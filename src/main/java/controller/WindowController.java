@@ -1,19 +1,18 @@
 package main.java.controller;
 
-import main.java.view.MainWindow;
+import main.java.model.BoardModel;
+import main.java.view.BoardView;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+public class WindowController{
+    private BoardView view;
+    private BoardModel model;
 
-public class WindowController extends WindowAdapter {
-    private MainWindow view;
-
-    public WindowController(MainWindow view) {
+    public WindowController(BoardView view, BoardModel model) {
         this.view = view;
+        this.model = model;
     }
 
-    @Override
-    public void windowClosing(WindowEvent e) {
-        view.dispose();
+    public void initView(){
+        view.setVisible(true);
     }
 }
