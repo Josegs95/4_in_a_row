@@ -19,19 +19,50 @@ public class MainWindow extends JFrame {
 
     private void init(){
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setSize(600, 400);
+        setSize(600, 550);
         setLocationRelativeTo(null);
 
-        JPanel mainPanel = new JPanel(
-                new MigLayout("wrap, fill, debug", "[][][][][][][]", "[][][][][][]"));
+        JPanel pnlBoard = new JPanel(
+                new MigLayout("wrap 7, fill, debug", "[fill]", "[fill]"));
         for (int i = 0; i < 42; i++){
-            mainPanel.add(new JPanel());
-        }
-        add(mainPanel);
+            JPanel panel = new JPanel();
+            panel.setBackground(i % 2 == 0 ? Color.RED : Color.YELLOW);
 
-        JPanel infoPanel = new JPanel();
-        infoPanel.setPreferredSize(new Dimension(400, 100));
-        add(infoPanel, BorderLayout.SOUTH);
+            pnlBoard.add(panel);
+        }
+        pnlBoard.setBackground(Color.BLUE);
+        add(pnlBoard);
+
+        JPanel pnlBottom = new JPanel(new BorderLayout());
+        pnlBottom.setPreferredSize(new Dimension(400, 150));
+        add(pnlBottom, BorderLayout.SOUTH);
+
+        JPanel pnlResult = new JPanel(new MigLayout("debug, filly"));
+        pnlBottom.add(pnlResult, BorderLayout.WEST);
+
+        JLabel lblRedWin = new JLabel("Rojo: 0");
+        lblRedWin.setFont(lblRedWin.getFont().deriveFont(Font.BOLD));
+        JLabel lblYellowWin = new JLabel("Amarillo: 0");
+        lblYellowWin.setFont(lblYellowWin.getFont().deriveFont(Font.BOLD));
+
+        pnlResult.add(lblRedWin, "wrap");
+        pnlResult.add(lblYellowWin);
+
+        JPanel pnlInfo = new JPanel(new MigLayout("debug, align 50% 50%"));
+        pnlBottom.add(pnlInfo, BorderLayout.CENTER);
+
+        JLabel lblInfo = new JLabel("Información: ");
+        pnlInfo.add(lblInfo);
+
+        JPanel pnlButton = new JPanel(
+                new MigLayout("debug, aligny 50%", "", "[]30[]"));
+        pnlBottom.add(pnlButton, BorderLayout.EAST);
+
+        JButton btnResetGame = new JButton("Reiniciar partida");
+        JButton btnResetWinCount = new JButton("Reiniciar contador");
+
+        pnlButton.add(btnResetGame, "wrap, grow");
+        pnlButton.add(btnResetWinCount, "grow");
 
         //pack();
     }
