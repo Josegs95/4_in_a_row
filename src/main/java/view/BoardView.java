@@ -1,15 +1,24 @@
 package main.java.view;
 
+import main.java.controller.WindowController;
 import main.java.model.BoardModel;
 import main.java.model.Piece;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 public class BoardView extends JFrame {
     private BoardModel model;
+    private WindowController controller;
+
     private JPanel pnlBoard;
+    private JLabel lblRedWin;
+    private JLabel lblYellowWin;
+    private JLabel lblInfo;
 
     public BoardView(String title, BoardModel model){
         super(title);
@@ -27,8 +36,7 @@ public class BoardView extends JFrame {
                 new MigLayout("wrap 7, fill, debug", "[fill]", "[fill]"));
         for (int i = 0; i < 42; i++){
             JPanel panel = new JPanel();
-//            panel.setBackground(i % 2 == 0 ? Color.RED : Color.YELLOW);
-
+            panel.addMouseListener(new MyMouseListener());
             pnlBoard.add(panel);
         }
         pnlBoard.setBackground(Color.BLUE);
@@ -41,9 +49,9 @@ public class BoardView extends JFrame {
         JPanel pnlResult = new JPanel(new MigLayout("debug, filly"));
         pnlBottom.add(pnlResult, BorderLayout.WEST);
 
-        JLabel lblRedWin = new JLabel("Rojo: 0");
+        lblRedWin = new JLabel("Rojo: 0");
         lblRedWin.setFont(lblRedWin.getFont().deriveFont(Font.BOLD));
-        JLabel lblYellowWin = new JLabel("Amarillo: 0");
+        lblYellowWin = new JLabel("Amarillo: 0");
         lblYellowWin.setFont(lblYellowWin.getFont().deriveFont(Font.BOLD));
 
         pnlResult.add(lblRedWin, "wrap");
@@ -52,7 +60,7 @@ public class BoardView extends JFrame {
         JPanel pnlInfo = new JPanel(new MigLayout("debug, align 50% 50%"));
         pnlBottom.add(pnlInfo, BorderLayout.CENTER);
 
-        JLabel lblInfo = new JLabel("Información: ");
+        lblInfo = new JLabel("Información: ");
         pnlInfo.add(lblInfo);
 
         JPanel pnlButton = new JPanel(
@@ -66,7 +74,14 @@ public class BoardView extends JFrame {
         pnlButton.add(btnResetWinCount, "grow");
 
         printPieces();
-        //pack();
+    }
+
+    public void setController(WindowController controller){
+        this.controller = controller;
+    }
+
+    private void setMessageToLabel(String message, JLabel label){
+        label.setText("Información: " + message);
     }
 
     private void printPieces(){
@@ -83,7 +98,7 @@ public class BoardView extends JFrame {
                     continue;
                 }
 
-                switch (board[y][x]){
+                switch (board[y][x].getType()){
                     case RED -> panel.setBackground(Color.RED);
                     case YELLOW -> panel.setBackground(Color.YELLOW);
                 }
@@ -92,6 +107,27 @@ public class BoardView extends JFrame {
                 System.out.println("x: " + x);
                 System.out.println("y: " + y);
             }
+        }
+
+        pnlBoard.repaint();
+    }
+
+    public class MyMouseListener extends MouseAdapter{
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int index = Arrays.asList(pnlBoard.getComponents()).indexOf(e.getComponent());
+            Piece piece;
+            if ((piece = controller.panelWasClicked(index)) != null)  {
+                printPieces();
+                if (controller.checkBoard(piece)) {
+                    setMessageToLabel("¡¡Hay 4 en raya!!", BoardView.this.lblInfo);
+                    System.out.println(piece);
+                }
+                else
+                    setMessageToLabel("", BoardView.this.lblInfo);
+            }
+            else
+                setMessageToLabel("No caben mas fichas en esta columna", BoardView.this.lblInfo);
         }
     }
 }
