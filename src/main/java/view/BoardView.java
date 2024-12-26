@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
 public class BoardView extends JFrame {
-    private BoardModel model;
+    final private BoardModel MODEL;
     private WindowController controller;
 
     private JPanel pnlBoard;
@@ -25,7 +25,7 @@ public class BoardView extends JFrame {
 
     public BoardView(String title, BoardModel model){
         super(title);
-        this.model = model;
+        this.MODEL = model;
 
         init();
     }
@@ -89,7 +89,7 @@ public class BoardView extends JFrame {
     }
 
     public void printBoard(){
-        Piece[][] board = model.getBoard();
+        Piece[][] board = MODEL.getBoard();
         for (int i = 0; i < pnlBoard.getComponents().length; i++){
             int y = i / board[0].length;
             int x = i % board[0].length;
@@ -129,7 +129,7 @@ public class BoardView extends JFrame {
 
     private void setWinner(){
         pnlBoard.setEnabled(false);
-        String winner = model.isRedTurn() ? "rojo" : "amarillo";
+        String winner = MODEL.isRedTurn() ? "rojo" : "amarillo";
         JOptionPane.showMessageDialog(this, "¡4 en raya! El equipo " + winner + " ha ganado.",
                 "Partida finalizada", JOptionPane.INFORMATION_MESSAGE);
         lblInfo.setText("Información: partida terminada.");
@@ -138,7 +138,7 @@ public class BoardView extends JFrame {
     }
 
     private void updateTurn(){
-        if (model.isRedTurn()) {
+        if (MODEL.isRedTurn()) {
             lblRedWin.setFont(boldBaseFont);
             lblYellowWin.setFont(baseFont);
         } else {
@@ -148,8 +148,8 @@ public class BoardView extends JFrame {
     }
 
     private void updateScores(){
-        lblRedWin.setText("Rojo: " + model.getRedWins());
-        lblYellowWin.setText("Amarillo: " + model.getYellowWins());
+        lblRedWin.setText("Rojo: " + MODEL.getRedWins());
+        lblYellowWin.setText("Amarillo: " + MODEL.getYellowWins());
     }
 
 

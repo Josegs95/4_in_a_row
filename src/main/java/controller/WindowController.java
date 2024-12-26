@@ -5,42 +5,42 @@ import main.java.model.Piece;
 import main.java.view.BoardView;
 
 public class WindowController{
-    private BoardView view;
-    private BoardModel model;
+    final private BoardView VIEW;
+    final private BoardModel MODEL;
 
     public WindowController(BoardView view, BoardModel model) {
-        this.view = view;
-        this.model = model;
+        this.VIEW = view;
+        this.MODEL = model;
     }
 
     public void initView(){
-        view.setController(this);
-        view.setVisible(true);
+        VIEW.setController(this);
+        VIEW.setVisible(true);
     }
 
     public boolean panelWasClicked(int index){
-        Piece newPiece = model.createPieceAt(index);
+        Piece newPiece = MODEL.createPieceAt(index);
         if (newPiece == null)
             return false;
 
-        boolean is4InARow = model.checkBoard(newPiece);
+        boolean is4InARow = MODEL.checkBoard(newPiece);
         if (is4InARow)
-            model.addWin();
+            MODEL.addWin();
         else
-            model.switchTurn();
+            MODEL.switchTurn();
 
-        view.printBoard();
+        VIEW.printBoard();
 
         return is4InARow;
     }
 
     public void resetGameButtonPressed(){
-        model.resetGame();
-        view.resetGame();
+        MODEL.resetGame();
+        VIEW.resetGame();
     }
 
     public void resetWinCountButtonPressed(){
-        model.resetAll();
-        view.resetAll();
+        MODEL.resetAll();
+        VIEW.resetAll();
     }
 }
