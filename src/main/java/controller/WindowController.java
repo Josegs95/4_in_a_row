@@ -18,11 +18,29 @@ public class WindowController{
         view.setVisible(true);
     }
 
-    public Piece panelWasClicked(int index){
-        return model.putPiece(index);
+    public boolean panelWasClicked(int index){
+        Piece newPiece = model.createPieceAt(index);
+        if (newPiece == null)
+            return false;
+
+        boolean is4InARow = model.checkBoard(newPiece);
+        if (is4InARow)
+            model.addWin();
+        else
+            model.switchTurn();
+
+        view.printBoard();
+
+        return is4InARow;
     }
 
-    public boolean checkBoard(Piece piece){
-        return model.checkBoard(piece);
+    public void resetGameButtonPressed(){
+        model.resetGame();
+        view.resetGame();
+    }
+
+    public void resetWinCountButtonPressed(){
+        model.resetAll();
+        view.resetAll();
     }
 }

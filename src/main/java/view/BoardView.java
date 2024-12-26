@@ -20,6 +20,9 @@ public class BoardView extends JFrame {
     private JLabel lblYellowWin;
     private JLabel lblInfo;
 
+    private Font baseFont;
+    private Font boldBaseFont;
+
     public BoardView(String title, BoardModel model){
         super(title);
         this.model = model;
@@ -33,10 +36,10 @@ public class BoardView extends JFrame {
         setLocationRelativeTo(null);
 
         pnlBoard = new JPanel(
-                new MigLayout("wrap 7, fill, debug", "[fill]", "[fill]"));
+                new MigLayout("wrap 7, fill", "[fill]", "[fill]"));
         for (int i = 0; i < 42; i++){
             JPanel panel = new JPanel();
-            panel.addMouseListener(new MyMouseListener());
+            panel.addMouseListener(new BoardMouseListener());
             pnlBoard.add(panel);
         }
         pnlBoard.setBackground(Color.BLUE);
@@ -46,45 +49,46 @@ public class BoardView extends JFrame {
         pnlBottom.setPreferredSize(new Dimension(400, 150));
         add(pnlBottom, BorderLayout.SOUTH);
 
-        JPanel pnlResult = new JPanel(new MigLayout("debug, filly"));
+        JPanel pnlResult = new JPanel(new MigLayout("insets 0 30 0, aligny center",
+                "", "[]20[]"));
         pnlBottom.add(pnlResult, BorderLayout.WEST);
 
-        lblRedWin = new JLabel("Rojo: 0");
-        lblRedWin.setFont(lblRedWin.getFont().deriveFont(Font.BOLD));
-        lblYellowWin = new JLabel("Amarillo: 0");
-        lblYellowWin.setFont(lblYellowWin.getFont().deriveFont(Font.BOLD));
+        lblRedWin = new JLabel();
+        lblYellowWin = new JLabel();
+
+        baseFont = lblRedWin.getFont().deriveFont(Font.PLAIN);
+        boldBaseFont = baseFont.deriveFont(Font.BOLD);
 
         pnlResult.add(lblRedWin, "wrap");
         pnlResult.add(lblYellowWin);
 
-        JPanel pnlInfo = new JPanel(new MigLayout("debug, align 50% 50%"));
+        JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%"));
         pnlBottom.add(pnlInfo, BorderLayout.CENTER);
 
         lblInfo = new JLabel("Información: ");
         pnlInfo.add(lblInfo);
 
         JPanel pnlButton = new JPanel(
-                new MigLayout("debug, aligny 50%", "", "[]30[]"));
+                new MigLayout("aligny 50%", "", "[]30[]"));
         pnlBottom.add(pnlButton, BorderLayout.EAST);
 
         JButton btnResetGame = new JButton("Reiniciar partida");
         JButton btnResetWinCount = new JButton("Reiniciar contador");
+        btnResetGame.addActionListener(e -> controller.resetGameButtonPressed());
+        btnResetWinCount.addActionListener(e -> controller.resetWinCountButtonPressed());
 
         pnlButton.add(btnResetGame, "wrap, grow");
         pnlButton.add(btnResetWinCount, "grow");
 
-        printPieces();
+        printBoard();
+        updateScores();
     }
 
     public void setController(WindowController controller){
         this.controller = controller;
     }
 
-    private void setMessageToLabel(String message, JLabel label){
-        label.setText("Información: " + message);
-    }
-
-    private void printPieces(){
+    public void printBoard(){
         Piece[][] board = model.getBoard();
         for (int i = 0; i < pnlBoard.getComponents().length; i++){
             int y = i / board[0].length;
@@ -110,24 +114,54 @@ public class BoardView extends JFrame {
         }
 
         pnlBoard.repaint();
+        updateTurn();
     }
 
-    public class MyMouseListener extends MouseAdapter{
+    public void resetGame(){
+        printBoard();
+        lblInfo.setText("Información: ");
+    }
+
+    public void resetAll(){
+        updateScores();
+        resetGame();
+    }
+
+    private void setWinner(){
+        pnlBoard.setEnabled(false);
+        String winner = model.isRedTurn() ? "rojo" : "amarillo";
+        JOptionPane.showMessageDialog(this, "¡4 en raya! El equipo " + winner + " ha ganado.",
+                "Partida finalizada", JOptionPane.INFORMATION_MESSAGE);
+        lblInfo.setText("Información: partida terminada.");
+
+        updateScores();
+    }
+
+    private void updateTurn(){
+        if (model.isRedTurn()) {
+            lblRedWin.setFont(boldBaseFont);
+            lblYellowWin.setFont(baseFont);
+        } else {
+            lblYellowWin.setFont(boldBaseFont);
+            lblRedWin.setFont(baseFont);
+        }
+    }
+
+    private void updateScores(){
+        lblRedWin.setText("Rojo: " + model.getRedWins());
+        lblYellowWin.setText("Amarillo: " + model.getYellowWins());
+    }
+
+
+
+    public class BoardMouseListener extends MouseAdapter{
         @Override
         public void mouseClicked(MouseEvent e) {
             int index = Arrays.asList(pnlBoard.getComponents()).indexOf(e.getComponent());
-            Piece piece;
-            if ((piece = controller.panelWasClicked(index)) != null)  {
-                printPieces();
-                if (controller.checkBoard(piece)) {
-                    setMessageToLabel("¡¡Hay 4 en raya!!", BoardView.this.lblInfo);
-                    System.out.println(piece);
-                }
-                else
-                    setMessageToLabel("", BoardView.this.lblInfo);
-            }
-            else
-                setMessageToLabel("No caben mas fichas en esta columna", BoardView.this.lblInfo);
+            boolean response = controller.panelWasClicked(index);
+
+            if (response)
+                setWinner();
         }
     }
 }

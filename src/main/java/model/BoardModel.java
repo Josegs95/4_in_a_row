@@ -1,5 +1,7 @@
 package main.java.model;
 
+import java.util.Arrays;
+
 public class BoardModel {
 
     private Piece[][] board;
@@ -7,26 +9,43 @@ public class BoardModel {
     final private int HEIGHT = 6;
 
     private boolean redTurn = true;
+    private int redWins = 0;
+    private int yellowWins = 0;
 
     public BoardModel(){
         board = new Piece[HEIGHT][WIDTH];
-        board[2][6] = new Piece(Piece.PieceType.RED, 6, 2);
-        board[3][5] = new Piece(Piece.PieceType.RED, 5, 3);
-        board[4][4] = new Piece(Piece.PieceType.RED, 4, 4);
+        board[2][6] = new Piece(Piece.PieceType.YELLOW, 6, 2);
+        board[3][5] = new Piece(Piece.PieceType.YELLOW, 5, 3);
+        board[4][4] = new Piece(Piece.PieceType.YELLOW, 4, 4);
     }
 
     public Piece[][] getBoard() {
         return board;
     }
 
-    public Piece putPiece(int index){
+    public int getRedWins() {
+        return redWins;
+    }
+
+    public int getYellowWins() {
+        return yellowWins;
+    }
+
+    public boolean isRedTurn(){
+        return redTurn;
+    }
+
+    public void switchTurn(){
+        redTurn = !redTurn;
+    }
+
+    public Piece createPieceAt(int index){
         int x = index % WIDTH;
 
         for (int i = HEIGHT - 1; i >= 0; i--){
             if (board[i][x] == null){
                 Piece piece = new Piece(redTurn ? Piece.PieceType.RED : Piece.PieceType.YELLOW, x, i);
                 board[i][x] = piece;
-                redTurn = !redTurn;
 
                 return piece;
             }
@@ -68,5 +87,23 @@ public class BoardModel {
             return counter;
         else
             return checkLine(piece, hIncrement * -1, vIncrement * -1, counter, true);
+    }
+
+    public void addWin(){
+        if (redTurn)
+            redWins++;
+        else
+            yellowWins++;
+    }
+
+    public void resetGame(){
+        Arrays.stream(board).forEach(x -> Arrays.fill(x, null));
+        redTurn = true;
+    }
+
+    public void resetAll(){
+        redWins = 0;
+        yellowWins = 0;
+        resetGame();
     }
 }
