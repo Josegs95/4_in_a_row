@@ -6,7 +6,10 @@ import main.java.model.Piece;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -20,11 +23,11 @@ public class BoardView extends JFrame {
     private JLabel lblYellowWin;
     private JLabel lblInfo;
 
-    private JButton btnResetGame = new JButton("Reiniciar partida");
-    private JButton btnResetWinCount = new JButton("Reiniciar contador");
-
     private Font baseFont;
     private Font boldBaseFont;
+
+    final private String RESET_GAME_TEXT = "Reiniciar partida";
+    final private String RESET_SESSION_TEXT = "Reiniciar sesión";
 
     public BoardView(String title, BoardModel model){
         super(title);
@@ -34,9 +37,24 @@ public class BoardView extends JFrame {
     }
 
     void init(){
+        //Look and feel
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(600, 550);
         setLocationRelativeTo(null);
+
+        JMenuBar menuBar = new JMenuBar();
+        //menuBar.setBorder(new LineBorder(Color.BLACK, 1));
+        setJMenuBar(menuBar);
+
+        JMenu menuGame = new JMenu("Partida");
+        menuBar.add(menuGame);
+
+        JMenuItem mnItemResetGame = new JMenuItem(RESET_GAME_TEXT);
+        JMenuItem mnItemResetSession = new JMenuItem(RESET_SESSION_TEXT);
+        JMenuItem mnItemExit = new JMenuItem("Salir");
+        menuGame.add(mnItemResetGame);
+        menuGame.add(mnItemResetSession);
+        menuGame.add(mnItemExit);
 
         pnlBoard = new JPanel(
                 new MigLayout("wrap 7, fill", "[fill]", "[fill]"));
@@ -45,7 +63,7 @@ public class BoardView extends JFrame {
             panel.addMouseListener(new BoardMouseListener());
             pnlBoard.add(panel);
         }
-        pnlBoard.setBackground(Color.BLUE);
+        pnlBoard.setBackground(Color.decode("#005254"));
         add(pnlBoard);
 
         JPanel pnlBottom = new JPanel(new BorderLayout());
@@ -65,7 +83,7 @@ public class BoardView extends JFrame {
         pnlResult.add(lblRedWin, "wrap");
         pnlResult.add(lblYellowWin);
 
-        JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%, debug"));
+        JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%"));
         pnlBottom.add(pnlInfo, BorderLayout.CENTER);
 
         lblInfo = new JLabel("Información: ");
@@ -75,13 +93,29 @@ public class BoardView extends JFrame {
                 new MigLayout("aligny 50%", "", "[]30[]"));
         pnlBottom.add(pnlButton, BorderLayout.EAST);
 
-        btnResetGame = new JButton("Reiniciar partida");
-        btnResetWinCount = new JButton("Reiniciar contador");
-        btnResetGame.addActionListener(e -> controller.resetGameButtonPressed());
-        btnResetWinCount.addActionListener(e -> controller.resetWinCountButtonPressed());
+        JButton btnResetGame = new JButton(RESET_GAME_TEXT);
+        JButton btnResetWinCount = new JButton(RESET_SESSION_TEXT);
 
         pnlButton.add(btnResetGame, "wrap, grow");
         pnlButton.add(btnResetWinCount, "grow");
+
+        //Listeners
+
+        ActionListener softResetListener = (e -> controller.resetGameButtonPressed());
+        ActionListener hardResetListener = (e -> controller.resetWinCountButtonPressed());
+
+        btnResetGame.addActionListener(softResetListener);
+        mnItemResetGame.addActionListener(softResetListener);
+
+        btnResetWinCount.addActionListener(hardResetListener);
+        mnItemResetSession.addActionListener(hardResetListener);
+
+        menuGame.setMnemonic(KeyEvent.VK_P);
+        mnItemResetGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
+        mnItemResetSession.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+        mnItemExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
+
+        mnItemExit.addActionListener((e -> BoardView.this.dispose()));
 
         printBoard();
         updateScores();
@@ -134,7 +168,7 @@ public class BoardView extends JFrame {
     private void setWinner(){
         pnlBoard.setEnabled(false);
         String infoText = "<html><div align=center>Información: partida terminada.<br>Pulse el botón '" +
-                btnResetGame.getText() + "' para empezar otra.</div></html>";
+                RESET_GAME_TEXT + "' para empezar otra.</div></html>";
         lblInfo.setText(infoText);
         String winner = MODEL.isRedTurn() ? "rojo" : "amarillo";
         JOptionPane.showMessageDialog(this, "¡4 en raya! El equipo " + winner + " ha ganado.",
