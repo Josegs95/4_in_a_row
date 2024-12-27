@@ -1,12 +1,11 @@
 package main.java.view;
 
-import main.java.controller.WindowController;
+import main.java.controller.Controller;
 import main.java.model.BoardModel;
 import main.java.model.Piece;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,9 +13,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
+/**
+ * This class job is to create the GUI, the frame, containers and their components. This class get the data
+ * from a model and communicate with the controller each time the user does an input.
+ */
+
 public class BoardView extends JFrame {
     final private BoardModel MODEL;
-    private WindowController controller;
+    private Controller controller;
 
     private JPanel pnlBoard;
     private JLabel lblRedWin;
@@ -29,6 +33,12 @@ public class BoardView extends JFrame {
     final private String RESET_GAME_TEXT = "Reiniciar partida";
     final private String RESET_SESSION_TEXT = "Reiniciar sesión";
 
+    /**
+     * Create a BoardView object from a title and a model.
+     *
+     * @param title the title of the JFrame
+     * @param model the model of which get all the data.
+     */
     public BoardView(String title, BoardModel model){
         super(title);
         this.MODEL = model;
@@ -36,7 +46,7 @@ public class BoardView extends JFrame {
         init();
     }
 
-    void init(){
+    private void init(){
         //Look and feel
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(600, 550);
@@ -121,11 +131,33 @@ public class BoardView extends JFrame {
         updateScores();
     }
 
-    public void setController(WindowController controller){
+    /**
+     * Set the controller to the view
+     *
+     * @param controller the controller of the view
+     */
+    public void setController(Controller controller){
         this.controller = controller;
     }
 
-    public void printBoard(){
+    /**
+     * Reset the board, with all their pieces to start a new game.
+     */
+    public void resetGame(){
+        printBoard();
+        lblInfo.setText("Información: ");
+        pnlBoard.setEnabled(true);
+    }
+
+    /**
+     * Reset the board and the scores
+     */
+    public void resetAll(){
+        updateScores();
+        resetGame();
+    }
+
+    private void printBoard(){
         Piece[][] board = MODEL.getBoard();
         for (int i = 0; i < pnlBoard.getComponents().length; i++){
             int y = i / board[0].length;
@@ -154,17 +186,6 @@ public class BoardView extends JFrame {
         updateTurn();
     }
 
-    public void resetGame(){
-        printBoard();
-        lblInfo.setText("Información: ");
-        pnlBoard.setEnabled(true);
-    }
-
-    public void resetAll(){
-        updateScores();
-        resetGame();
-    }
-
     private void setWinner(){
         pnlBoard.setEnabled(false);
         String infoText = "<html><div align=center>Información: partida terminada.<br>Pulse el botón '" +
@@ -191,14 +212,18 @@ public class BoardView extends JFrame {
         lblYellowWin.setText("Amarillo: " + MODEL.getYellowWins());
     }
 
-    public class BoardMouseListener extends MouseAdapter{
+    private class BoardMouseListener extends MouseAdapter{
         @Override
         public void mouseClicked(MouseEvent e) {
             if (pnlBoard.isEnabled()){
                 int index = Arrays.asList(pnlBoard.getComponents()).indexOf(e.getComponent());
-                boolean response = controller.panelWasClicked(index);
+                int response = controller.panelWasClicked(index);
+                if (response == -1)
+                    return;
 
-                if (response)
+                printBoard();
+
+                if (response == 1)
                     setWinner();
             }
         }
