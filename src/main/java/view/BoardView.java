@@ -20,6 +20,9 @@ public class BoardView extends JFrame {
     private JLabel lblYellowWin;
     private JLabel lblInfo;
 
+    private JButton btnResetGame = new JButton("Reiniciar partida");
+    private JButton btnResetWinCount = new JButton("Reiniciar contador");
+
     private Font baseFont;
     private Font boldBaseFont;
 
@@ -62,7 +65,7 @@ public class BoardView extends JFrame {
         pnlResult.add(lblRedWin, "wrap");
         pnlResult.add(lblYellowWin);
 
-        JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%"));
+        JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%, debug"));
         pnlBottom.add(pnlInfo, BorderLayout.CENTER);
 
         lblInfo = new JLabel("Información: ");
@@ -72,8 +75,8 @@ public class BoardView extends JFrame {
                 new MigLayout("aligny 50%", "", "[]30[]"));
         pnlBottom.add(pnlButton, BorderLayout.EAST);
 
-        JButton btnResetGame = new JButton("Reiniciar partida");
-        JButton btnResetWinCount = new JButton("Reiniciar contador");
+        btnResetGame = new JButton("Reiniciar partida");
+        btnResetWinCount = new JButton("Reiniciar contador");
         btnResetGame.addActionListener(e -> controller.resetGameButtonPressed());
         btnResetWinCount.addActionListener(e -> controller.resetWinCountButtonPressed());
 
@@ -120,6 +123,7 @@ public class BoardView extends JFrame {
     public void resetGame(){
         printBoard();
         lblInfo.setText("Información: ");
+        pnlBoard.setEnabled(true);
     }
 
     public void resetAll(){
@@ -129,11 +133,12 @@ public class BoardView extends JFrame {
 
     private void setWinner(){
         pnlBoard.setEnabled(false);
+        String infoText = "<html><div align=center>Información: partida terminada.<br>Pulse el botón '" +
+                btnResetGame.getText() + "' para empezar otra.</div></html>";
+        lblInfo.setText(infoText);
         String winner = MODEL.isRedTurn() ? "rojo" : "amarillo";
         JOptionPane.showMessageDialog(this, "¡4 en raya! El equipo " + winner + " ha ganado.",
                 "Partida finalizada", JOptionPane.INFORMATION_MESSAGE);
-        lblInfo.setText("Información: partida terminada.");
-
         updateScores();
     }
 
@@ -152,16 +157,16 @@ public class BoardView extends JFrame {
         lblYellowWin.setText("Amarillo: " + MODEL.getYellowWins());
     }
 
-
-
     public class BoardMouseListener extends MouseAdapter{
         @Override
         public void mouseClicked(MouseEvent e) {
-            int index = Arrays.asList(pnlBoard.getComponents()).indexOf(e.getComponent());
-            boolean response = controller.panelWasClicked(index);
+            if (pnlBoard.isEnabled()){
+                int index = Arrays.asList(pnlBoard.getComponents()).indexOf(e.getComponent());
+                boolean response = controller.panelWasClicked(index);
 
-            if (response)
-                setWinner();
+                if (response)
+                    setWinner();
+            }
         }
     }
 }
