@@ -18,11 +18,14 @@ import java.util.Arrays;
  * from a model and communicate with the controller each time the user does an input.
  */
 
-public class BoardView extends JFrame {
+public class BoardPanelView extends JPanel {
     final private BoardModel MODEL;
     private Controller controller;
 
+    final private JFrame FRAME;
+
     private JPanel pnlBoard;
+
     private JLabel lblRedWin;
     private JLabel lblYellowWin;
     private JLabel lblInfo;
@@ -34,13 +37,12 @@ public class BoardView extends JFrame {
     final private String RESET_SESSION_TEXT = "Reiniciar sesión";
 
     /**
-     * Create a BoardView object from a title and a model.
+     * Create a BoardPanelView object and sets a model.
      *
-     * @param title the title of the JFrame
      * @param model the model of which get all the data.
      */
-    public BoardView(String title, BoardModel model){
-        super(title);
+    public BoardPanelView(JFrame parent, BoardModel model){
+        this.FRAME = parent;
         this.MODEL = model;
 
         init();
@@ -48,13 +50,10 @@ public class BoardView extends JFrame {
 
     private void init(){
         //Look and feel
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(600, 550);
-        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
         JMenuBar menuBar = new JMenuBar();
-        //menuBar.setBorder(new LineBorder(Color.BLACK, 1));
-        setJMenuBar(menuBar);
+        FRAME.setJMenuBar(menuBar);
 
         JMenu menuGame = new JMenu("Partida");
         menuBar.add(menuGame);
@@ -74,7 +73,7 @@ public class BoardView extends JFrame {
             pnlBoard.add(panel);
         }
         pnlBoard.setBackground(Color.decode("#005254"));
-        add(pnlBoard);
+        add(pnlBoard, BorderLayout.CENTER);
 
         JPanel pnlBottom = new JPanel(new BorderLayout());
         pnlBottom.setPreferredSize(new Dimension(400, 150));
@@ -125,7 +124,7 @@ public class BoardView extends JFrame {
         mnItemResetSession.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         mnItemExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK));
 
-        mnItemExit.addActionListener((e -> BoardView.this.dispose()));
+        mnItemExit.addActionListener((e -> FRAME.dispose()));
 
         printBoard();
         updateScores();
