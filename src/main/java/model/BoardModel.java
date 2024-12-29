@@ -21,14 +21,6 @@ public class BoardModel {
      */
     public BoardModel(){
         BOARD = new Piece[HEIGHT][WIDTH];
-        BOARD[4][0] = new Piece(Piece.PieceType.RED, 0, 4);
-        BOARD[3][1] = new Piece(Piece.PieceType.RED, 1, 3);
-        BOARD[2][2] = new Piece(Piece.PieceType.RED, 2, 2);
-
-        BOARD[2][3] = new Piece(Piece.PieceType.YELLOW, 3, 2);
-        BOARD[3][3] = new Piece(Piece.PieceType.RED, 3, 3);
-        BOARD[4][3] = new Piece(Piece.PieceType.YELLOW, 3, 4);
-        BOARD[5][3] = new Piece(Piece.PieceType.RED, 3, 5);
     }
 
     /**

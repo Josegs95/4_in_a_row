@@ -39,6 +39,7 @@ public class BoardPanelView extends JPanel {
     /**
      * Create a BoardPanelView object and sets a model.
      *
+     * @param parent the JFrame on which this panel is added. Equivalent to (JFrame) this.getParent();
      * @param model the model of which get all the data.
      */
     public BoardPanelView(JFrame parent, BoardModel model){

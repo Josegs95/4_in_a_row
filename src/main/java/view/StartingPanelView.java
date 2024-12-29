@@ -9,13 +9,19 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
+/**
+ * Represents the starting panel where the user will end when starting the app. There the user
+ * can read the rules of the game.
+ */
 public class StartingPanelView extends JPanel {
 
     final private JFrame FRAME;
 
-    private int cont = 0;
-    private String[] fontName;
-
+    /**
+     * Creates a StartingPanelView object
+     *
+     * @param parent the JFrame on which this panel is added. Equivalent to (JFrame) this.getParent();
+     */
     public StartingPanelView(JFrame parent){
         super();
 
@@ -39,7 +45,6 @@ public class StartingPanelView extends JPanel {
                 new LineBorder(Color.RED, 1, true), new EmptyBorder(5, 5, 5, 5)));
         lblInfo.setFont(lblInfo.getFont().deriveFont(20f));
 
-        JPanel pnlButton = new JPanel(new MigLayout("fill"));
         JButton btnPlay = new JButton("Jugar");
         btnPlay.setMinimumSize(new Dimension(100, 20));
 
@@ -49,15 +54,9 @@ public class StartingPanelView extends JPanel {
         pnlMain.add(lblInfo, "gapx 50 50, aligny 30%");
         pnlMain.add(btnPlay, "gapx 0 30, aligny 80%");
 
-        //pnlButton.add(btnPlay, "gapx 0 30, aligny 80%");
-
         setBackground(Color.decode("#005254"));
         pnlMain.setOpaque(false);
-        //pnlButton.setOpaque(false);
         btnPlay.setOpaque(false);
-
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        fontName = ge.getAvailableFontFamilyNames();
 
         btnPlay.addActionListener(e -> {
             FRAME.getContentPane().removeAll();
