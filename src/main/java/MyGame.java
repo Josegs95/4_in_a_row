@@ -25,9 +25,6 @@ public class MyGame {
                 ex.printStackTrace();
             }
 
-//            BoardModel model = new BoardModel();
-//            BoardPanelView window = new BoardPanelView("4 en raya", model);
-//            new Controller(window, model);
             FrameView frame = new FrameView("4 en raya");
             frame.setVisible(true);
         });

@@ -1,18 +1,26 @@
 package main.java.view;
 
+import main.java.controller.Controller;
+import main.java.model.BoardModel;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class StartingPanelView extends JPanel {
 
+    final private JFrame FRAME;
+
     private int cont = 0;
     private String[] fontName;
 
-    public StartingPanelView(){
+    public StartingPanelView(JFrame parent){
         super();
+
+        this.FRAME = parent;
+
         init();
     }
 
@@ -23,40 +31,58 @@ public class StartingPanelView extends JPanel {
 
         JLabel lblTitle = new JLabel(title, SwingConstants.CENTER);
         lblTitle.setForeground(Color.YELLOW);
-        lblTitle.setFont(new Font("Comic Sans MS", Font.BOLD, 32));
+        lblTitle.setFont(new Font("Comic Sans MS", Font.BOLD, 42));
 
-        JPanel pnlMain = new JPanel(new MigLayout());
-        JLabel lblInfo = new JLabel("<html><div align=center>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam et dui libero. Cras mollis enim eget erat consequat fermentum. Integer placerat sed dolor sed blandit. Aenean vulputate mi at posuere cursus. Fusce non urna tellus. Ut ultricies sapien vestibulum massa tempus, in elementum purus lobortis. Maecenas eros lectus, fringilla bibendum sollicitudin consectetur, efficitur ut metus. Mauris placerat tempus suscipit. Morbi ultrices tortor vitae pellentesque fringilla. Nullam eu tristique elit, sed feugiat justo. Suspendisse lorem risus, mollis non imperdiet nec, eleifend sed neque. Sed elementum, erat eu auctor efficitur, leo felis tempus lorem, eget consectetur metus lectus ut eros. Orci varius.</div></html>");
-        lblInfo.setBorder(new LineBorder(Color.CYAN, 1, true));
+        JPanel pnlMain = new JPanel(new MigLayout("filly", "[grow 70][grow 30]", ""));
+        JLabel lblInfo = new JLabel(getHTMLText(getMessageToUser()));
+        lblInfo.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(Color.RED, 1, true), new EmptyBorder(5, 5, 5, 5)));
+        lblInfo.setFont(lblInfo.getFont().deriveFont(20f));
 
         JPanel pnlButton = new JPanel(new MigLayout("fill"));
-        JButton btnStart = new JButton("Comenzar");
+        JButton btnPlay = new JButton("Jugar");
+        btnPlay.setMinimumSize(new Dimension(100, 20));
 
         add(lblTitle, "north, gapy 20 0");
         add(pnlMain, "dock center");
 
-        pnlMain.add(lblInfo, "dock center, gapx 100 100");
-        pnlMain.add(pnlButton, "east");
+        pnlMain.add(lblInfo, "gapx 50 50, aligny 30%");
+        pnlMain.add(btnPlay, "gapx 0 30, aligny 80%");
 
-        pnlButton.add(btnStart, "gapx 10 30, aligny 80%");
+        //pnlButton.add(btnPlay, "gapx 0 30, aligny 80%");
 
-        setBackground(Color.GRAY);
+        setBackground(Color.decode("#005254"));
         pnlMain.setOpaque(false);
-        pnlButton.setOpaque(false);
-        btnStart.setOpaque(false);
+        //pnlButton.setOpaque(false);
+        btnPlay.setOpaque(false);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         fontName = ge.getAvailableFontFamilyNames();
 
-        btnStart.addActionListener(e -> lblTitle.setFont(getNextFont()));
+        btnPlay.addActionListener(e -> {
+            FRAME.getContentPane().removeAll();
+
+            BoardModel model = new BoardModel();
+            BoardPanelView boardPanel = new BoardPanelView(FRAME, model);
+            Controller controller = new Controller(boardPanel, model);
+            boardPanel.setController(controller);
+
+            FRAME.getContentPane().add(boardPanel);
+            FRAME.validate();
+        });
     }
 
-    private Font getNextFont(){
-        if (cont == fontName.length)
-            cont = 0;
-        System.out.println(fontName[cont]);
-        Font font = new Font(fontName[cont++], Font.BOLD, 32);
+    private String getHTMLText(String text){
+        return "<html><div align=center>" + text + "</div></html>";
+    }
 
-        return font;
+    private String getMessageToUser(){
+        return "¡Hola!, espero que disfrutes del juego que he diseñado. El juego es muy simple así que resumiré sus reglas:" +
+                "<br><ol>" +
+                "<li>Se juega con dos jugadores, uno contra el otro.</li>" +
+                "<li>Empieza siempre las fichas rojas.</li>" +
+                "<li>Gana quien primero consiga un 4 en raya.</li>" +
+                "<li>Puedes reiniciar la partida solo o la partida y contadores de victorias.</li>" +
+                "<ol>";
     }
 }

@@ -21,6 +21,14 @@ public class BoardModel {
      */
     public BoardModel(){
         BOARD = new Piece[HEIGHT][WIDTH];
+        BOARD[4][0] = new Piece(Piece.PieceType.RED, 0, 4);
+        BOARD[3][1] = new Piece(Piece.PieceType.RED, 1, 3);
+        BOARD[2][2] = new Piece(Piece.PieceType.RED, 2, 2);
+
+        BOARD[2][3] = new Piece(Piece.PieceType.YELLOW, 3, 2);
+        BOARD[3][3] = new Piece(Piece.PieceType.RED, 3, 3);
+        BOARD[4][3] = new Piece(Piece.PieceType.YELLOW, 3, 4);
+        BOARD[5][3] = new Piece(Piece.PieceType.RED, 3, 5);
     }
 
     /**
@@ -122,7 +130,7 @@ public class BoardModel {
         int y = piece.getY() + vIncrement;
 
         for (int i = 0; i < 3; i++){
-            if (!((x > 0 && x < WIDTH) && (y > 0 && y < HEIGHT)) )
+            if (!((x >= 0 && x < WIDTH) && (y >= 0 && y < HEIGHT)) )
                 break;
 
             if (BOARD[y][x] != null && BOARD[y][x].getType() == piece.getType()) {

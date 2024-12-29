@@ -26,7 +26,7 @@ public class FrameView extends JFrame {
 //        boardPanel.setController(new Controller(boardPanel, model));
 //
 //        getContentPane().add(boardPanel);
-        StartingPanelView startingPanel = new StartingPanelView();
+        StartingPanelView startingPanel = new StartingPanelView(this);
         getContentPane().add(startingPanel);
     }
 
