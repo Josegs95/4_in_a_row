@@ -1,4 +1,4 @@
-<h1>Still working on it (27-12-24)</h1>
+<h1>Still working on it (29-12-24)</h1>
 
 <h2>About</h2>
 <p>This is my first application to add to my portfolio. In this project I wanted to practice the MVC file structure too.</p>
@@ -12,7 +12,6 @@ be played againsts another player (PvP). Each time a player wins, the score of t
 <small><em>Optional</em></small>
 <ul>
   <li>Play alone, vs randomess</li>
-  <li>Add a front page</li>
   <li>Can save state of a session into a file, and load it</li>
 </ul>
 
