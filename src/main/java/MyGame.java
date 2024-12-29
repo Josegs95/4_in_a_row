@@ -2,7 +2,8 @@ package main.java;
 
 import main.java.controller.Controller;
 import main.java.model.BoardModel;
-import main.java.view.BoardView;
+import main.java.view.BoardPanelView;
+import main.java.view.FrameView;
 
 import javax.swing.*;
 
@@ -18,9 +19,14 @@ import javax.swing.*;
 public class MyGame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            BoardModel model = new BoardModel();
-            BoardView window = new BoardView("4 en raya", model);
-            new Controller(window, model);
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                ex.printStackTrace();
+            }
+
+            FrameView frame = new FrameView("4 en raya");
+            frame.setVisible(true);
         });
     }
 }

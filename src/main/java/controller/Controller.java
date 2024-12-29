@@ -2,14 +2,14 @@ package main.java.controller;
 
 import main.java.model.BoardModel;
 import main.java.model.Piece;
-import main.java.view.BoardView;
+import main.java.view.BoardPanelView;
 
 /**
  * It's called by the view when the user use the app and communicate with the model to update it.
  */
 
 public class Controller {
-    final private BoardView VIEW;
+    final private BoardPanelView VIEW;
     final private BoardModel MODEL;
 
     /**
@@ -18,7 +18,7 @@ public class Controller {
      * @param view the view to control
      * @param model the model with the data for the view
      */
-    public Controller(BoardView view, BoardModel model) {
+    public Controller(BoardPanelView view, BoardModel model) {
         this.VIEW = view;
         this.MODEL = model;
 

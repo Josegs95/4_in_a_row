@@ -122,7 +122,7 @@ public class BoardModel {
         int y = piece.getY() + vIncrement;
 
         for (int i = 0; i < 3; i++){
-            if (!((x > 0 && x < WIDTH) && (y > 0 && y < HEIGHT)) )
+            if (!((x >= 0 && x < WIDTH) && (y >= 0 && y < HEIGHT)) )
                 break;
 
             if (BOARD[y][x] != null && BOARD[y][x].getType() == piece.getType()) {
