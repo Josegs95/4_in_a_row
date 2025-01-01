@@ -34,12 +34,12 @@ public class Controller {
      * This method is called when the user click on a panel of the board. Create a new Piece in the same column
      * of the panel clicked and check if with that new piece, a 4-in-a-row is formed.
      *
-     * @param index the index of the panel in the board, from 0 to 41
+     * @param targetColumn the target column on which the new Piece will be created.
      * @return -1 if a new Piece wasn't created, 0 if was created but no 4-in-a-row was found and 1 if it was.
      * @see main.java.model.BoardModel
      */
-    public int panelWasClicked(int index){
-        Piece newPiece = MODEL.createPieceAt(index);
+    public int panelWasClicked(int targetColumn){
+        Piece newPiece = MODEL.createPieceAt(targetColumn);
         if (newPiece == null)
             return -1;
 

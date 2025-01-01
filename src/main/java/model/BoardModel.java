@@ -12,6 +12,7 @@ public class BoardModel {
     final private int WIDTH = 7;
     final private int HEIGHT = 6;
 
+    private boolean modePvE = false;
     private boolean redTurn = true;
     private int redWins = 0;
     private int yellowWins = 0;
@@ -67,25 +68,49 @@ public class BoardModel {
         redTurn = !redTurn;
     }
 
+    public int getWIDTH() {
+        return WIDTH;
+    }
+
+    public int getHEIGHT() {
+        return HEIGHT;
+    }
+
+    public boolean isModePvE() {
+        return modePvE;
+    }
+
+    public void setModePvE(boolean modePvE) {
+        this.modePvE = modePvE;
+    }
+
     /**
-     * Try to create a new piece in the same column of the index.
+     * Try to create a new piece in the same column of the targetColumn.
      *
-     * @param index the index of the panel where the user clicked.
+     * @param targetColumn the target column on which the new Piece will be created.
      * @return a new Piece object, or null if no more Pieces can be created in the column.
      */
-    public Piece createPieceAt(int index){
-        int x = index % WIDTH;
-
+    public Piece createPieceAt(int targetColumn){
         for (int i = HEIGHT - 1; i >= 0; i--){
-            if (BOARD[i][x] == null){
-                Piece piece = new Piece(redTurn ? Piece.PieceType.RED : Piece.PieceType.YELLOW, x, i);
-                BOARD[i][x] = piece;
+            if (BOARD[i][targetColumn] == null){
+                Piece piece = new Piece(redTurn ? Piece.PieceType.RED : Piece.PieceType.YELLOW, targetColumn, i);
+                BOARD[i][targetColumn] = piece;
 
                 return piece;
             }
         }
 
         return null;
+    }
+
+    public int getRandomAvailableColumn(){
+        while(true){
+            int column = (int) (Math.random() * WIDTH);
+            for (int i = 0; i < HEIGHT; i++){
+                if (BOARD[i][column] == null)
+                    return column;
+            }
+        }
     }
 
     /**

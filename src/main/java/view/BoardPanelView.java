@@ -7,11 +7,9 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Arrays;
+import java.util.concurrent.*;
 
 /**
  * This class job is to create the GUI, the frame, containers and their components. This class get the data
@@ -29,6 +27,9 @@ public class BoardPanelView extends JPanel {
     private JLabel lblRedWin;
     private JLabel lblYellowWin;
     private JLabel lblInfo;
+
+    private JRadioButton rbtnPvP;
+    private JRadioButton rbtnPvE;
 
     private Font baseFont;
     private Font boldBaseFont;
@@ -57,7 +58,9 @@ public class BoardPanelView extends JPanel {
         FRAME.setJMenuBar(menuBar);
 
         JMenu menuGame = new JMenu("Partida");
+        JMenu menuOption = new JMenu("Opciones");
         menuBar.add(menuGame);
+        menuBar.add(menuOption);
 
         JMenuItem mnItemResetGame = new JMenuItem(RESET_GAME_TEXT);
         JMenuItem mnItemResetSession = new JMenuItem(RESET_SESSION_TEXT);
@@ -65,6 +68,18 @@ public class BoardPanelView extends JPanel {
         menuGame.add(mnItemResetGame);
         menuGame.add(mnItemResetSession);
         menuGame.add(mnItemExit);
+
+        JMenu menuMode = new JMenu("Modo");
+        menuOption.add(menuMode);
+
+        rbtnPvP = new JRadioButton("PvP");
+        rbtnPvE = new JRadioButton("PvE");
+        ButtonGroup btnGMode = new ButtonGroup();
+        btnGMode.add(rbtnPvP);
+        btnGMode.add(rbtnPvE);
+        rbtnPvP.setSelected(true);
+        menuMode.add(rbtnPvP);
+        menuMode.add(rbtnPvE);
 
         pnlBoard = new JPanel(
                 new MigLayout("wrap 7, fill", "[fill]", "[fill]"));
@@ -119,6 +134,9 @@ public class BoardPanelView extends JPanel {
 
         btnResetWinCount.addActionListener(hardResetListener);
         mnItemResetSession.addActionListener(hardResetListener);
+
+        rbtnPvP.addActionListener(new ChoosingModeActionListener("PVP"));
+        rbtnPvE.addActionListener(new ChoosingModeActionListener("PVE"));
 
         menuGame.setMnemonic(KeyEvent.VK_P);
         mnItemResetGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
@@ -217,15 +235,78 @@ public class BoardPanelView extends JPanel {
         public void mouseClicked(MouseEvent e) {
             if (pnlBoard.isEnabled()){
                 int index = Arrays.asList(pnlBoard.getComponents()).indexOf(e.getComponent());
-                int response = controller.panelWasClicked(index);
+                int targetColumn = index % MODEL.getWIDTH();
+                int response = controller.panelWasClicked(targetColumn);
                 if (response == -1)
                     return;
 
                 printBoard();
 
+                if (response == 1) {
+                    setWinner();
+                    return;
+                }
+
+                if (MODEL.isModePvE()){
+                    pnlBoard.setEnabled(false);
+                    createRandomPiece();
+                }
+            }
+        }
+
+        private void createRandomPiece(){
+            new Thread(() -> {
+                try{
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                int response = controller.panelWasClicked(MODEL.getRandomAvailableColumn());
+
+                printBoard();
+                pnlBoard.setEnabled(true);
+
                 if (response == 1)
                     setWinner();
+            }).start();
+        }
+    }
+
+    private class ChoosingModeActionListener implements ActionListener{
+
+        final private String MODE;
+
+        ChoosingModeActionListener(String mode){
+            this.MODE = mode.toUpperCase();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (MODE.equals("PVP") ? !MODEL.isModePvE() : MODEL.isModePvE()) {
+                cancelChange();
+                return;
             }
+
+            int option = JOptionPane.showConfirmDialog(FRAME,
+                    "Se va a reiniciar el tablero y los marcadores para activar el modo " + MODE + ". ¿Estás seguro?",
+                    "Activar modo " + MODE,
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.NO_OPTION) {
+                cancelChange();
+                return;
+            }
+
+            MODEL.setModePvE(MODE.equals("PVE"));
+            controller.resetWinCountButtonPressed();
+        }
+
+        private void cancelChange(){
+            if (MODE.equals("PVP"))
+                rbtnPvE.setSelected(true);
+            else
+                rbtnPvP.setSelected(true);
         }
     }
 }
