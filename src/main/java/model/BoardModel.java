@@ -12,7 +12,7 @@ public class BoardModel {
     final private int WIDTH = 7;
     final private int HEIGHT = 6;
 
-    private boolean modePvE = false;
+    private GameMode gameMode = GameMode.PVP;
     private boolean redTurn = true;
     private int redWins = 0;
     private int yellowWins = 0;
@@ -76,12 +76,12 @@ public class BoardModel {
         return HEIGHT;
     }
 
-    public boolean isModePvE() {
-        return modePvE;
+    public GameMode getGameMode() {
+        return gameMode;
     }
 
-    public void setModePvE(boolean modePvE) {
-        this.modePvE = modePvE;
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
     }
 
     /**

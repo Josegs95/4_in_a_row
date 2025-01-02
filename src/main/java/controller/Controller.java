@@ -1,6 +1,7 @@
 package main.java.controller;
 
 import main.java.model.BoardModel;
+import main.java.model.GameMode;
 import main.java.model.Piece;
 import main.java.view.BoardPanelView;
 
@@ -66,6 +67,12 @@ public class Controller {
      * and the view this event.
      */
     public void resetWinCountButtonPressed(){
+        MODEL.resetAll();
+        VIEW.resetAll();
+    }
+
+    public void changeGameMode(GameMode gameMode){
+        MODEL.setGameMode(gameMode);
         MODEL.resetAll();
         VIEW.resetAll();
     }

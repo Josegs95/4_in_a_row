@@ -2,6 +2,7 @@ package main.java.view;
 
 import main.java.controller.Controller;
 import main.java.model.BoardModel;
+import main.java.model.GameMode;
 import main.java.model.Piece;
 import net.miginfocom.swing.MigLayout;
 
@@ -9,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
-import java.util.concurrent.*;
 
 /**
  * This class job is to create the GUI, the frame, containers and their components. This class get the data
@@ -24,8 +24,8 @@ public class BoardPanelView extends JPanel {
 
     private JPanel pnlBoard;
 
-    private JLabel lblRedWin;
-    private JLabel lblYellowWin;
+    private JLabel lblRedScore;
+    private JLabel lblYellowScore;
     private JLabel lblInfo;
 
     private JRadioButton rbtnPvP;
@@ -91,32 +91,32 @@ public class BoardPanelView extends JPanel {
         pnlBoard.setBackground(Color.decode("#005254"));
         add(pnlBoard, BorderLayout.CENTER);
 
-        JPanel pnlBottom = new JPanel(new BorderLayout());
+        JPanel pnlBottom = new JPanel(new MigLayout("fill", "[grow 20][grow 80][]"));
         pnlBottom.setPreferredSize(new Dimension(400, 150));
         add(pnlBottom, BorderLayout.SOUTH);
 
-        JPanel pnlResult = new JPanel(new MigLayout("insets 0 30 0, aligny center",
+        JPanel pnlScores = new JPanel(new MigLayout("align 50% 50%, fill",
                 "", "[]20[]"));
-        pnlBottom.add(pnlResult, BorderLayout.WEST);
+        pnlBottom.add(pnlScores, "growx");
 
-        lblRedWin = new JLabel();
-        lblYellowWin = new JLabel();
+        lblRedScore = new JLabel("", SwingConstants.CENTER);
+        lblYellowScore = new JLabel("", SwingConstants.CENTER);
 
-        baseFont = lblRedWin.getFont().deriveFont(Font.PLAIN);
+        baseFont = lblRedScore.getFont().deriveFont(Font.PLAIN);
         boldBaseFont = baseFont.deriveFont(Font.BOLD);
 
-        pnlResult.add(lblRedWin, "wrap");
-        pnlResult.add(lblYellowWin);
+        pnlScores.add(lblRedScore, "wrap, alignx 50%, growx");
+        pnlScores.add(lblYellowScore, "alignx 50%, growx");
 
         JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%"));
-        pnlBottom.add(pnlInfo, BorderLayout.CENTER);
+        pnlBottom.add(pnlInfo);
 
         lblInfo = new JLabel("Información: ");
         pnlInfo.add(lblInfo);
 
         JPanel pnlButton = new JPanel(
                 new MigLayout("aligny 50%", "", "[]30[]"));
-        pnlBottom.add(pnlButton, BorderLayout.EAST);
+        pnlBottom.add(pnlButton);
 
         JButton btnResetGame = new JButton(RESET_GAME_TEXT);
         JButton btnResetWinCount = new JButton(RESET_SESSION_TEXT);
@@ -135,8 +135,8 @@ public class BoardPanelView extends JPanel {
         btnResetWinCount.addActionListener(hardResetListener);
         mnItemResetSession.addActionListener(hardResetListener);
 
-        rbtnPvP.addActionListener(new ChoosingModeActionListener("PVP"));
-        rbtnPvE.addActionListener(new ChoosingModeActionListener("PVE"));
+        rbtnPvP.addActionListener(new ChoosingModeActionListener(GameMode.PVP));
+        rbtnPvE.addActionListener(new ChoosingModeActionListener(GameMode.PVE));
 
         menuGame.setMnemonic(KeyEvent.VK_P);
         mnItemResetGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
@@ -217,17 +217,23 @@ public class BoardPanelView extends JPanel {
 
     private void updateTurn(){
         if (MODEL.isRedTurn()) {
-            lblRedWin.setFont(boldBaseFont);
-            lblYellowWin.setFont(baseFont);
+            lblRedScore.setFont(boldBaseFont);
+            lblYellowScore.setFont(baseFont);
         } else {
-            lblYellowWin.setFont(boldBaseFont);
-            lblRedWin.setFont(baseFont);
+            lblYellowScore.setFont(boldBaseFont);
+            lblRedScore.setFont(baseFont);
         }
     }
 
     private void updateScores(){
-        lblRedWin.setText("Rojo: " + MODEL.getRedWins());
-        lblYellowWin.setText("Amarillo: " + MODEL.getYellowWins());
+        GameMode gameMode = MODEL.getGameMode();
+        if (gameMode == GameMode.PVE){
+            lblRedScore.setText("Rojo (Tú): " + MODEL.getRedWins());
+            lblYellowScore.setText("Amarillo (IA): " + MODEL.getYellowWins());
+        } else if (gameMode == GameMode.PVP){
+            lblRedScore.setText("Rojo: " + MODEL.getRedWins());
+            lblYellowScore.setText("Amarillo: " + MODEL.getYellowWins());
+        }
     }
 
     private class BoardMouseListener extends MouseAdapter{
@@ -247,7 +253,7 @@ public class BoardPanelView extends JPanel {
                     return;
                 }
 
-                if (MODEL.isModePvE()){
+                if (MODEL.getGameMode() == GameMode.PVE){
                     pnlBoard.setEnabled(false);
                     createRandomPiece();
                 }
@@ -275,15 +281,15 @@ public class BoardPanelView extends JPanel {
 
     private class ChoosingModeActionListener implements ActionListener{
 
-        final private String MODE;
+        final private GameMode MODE;
 
-        ChoosingModeActionListener(String mode){
-            this.MODE = mode.toUpperCase();
+        ChoosingModeActionListener(GameMode gameMode){
+            this.MODE = gameMode;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (MODE.equals("PVP") ? !MODEL.isModePvE() : MODEL.isModePvE()) {
+            if (MODE == MODEL.getGameMode()) {
                 cancelChange();
                 return;
             }
@@ -298,14 +304,13 @@ public class BoardPanelView extends JPanel {
                 return;
             }
 
-            MODEL.setModePvE(MODE.equals("PVE"));
-            controller.resetWinCountButtonPressed();
+            controller.changeGameMode(MODE);
         }
 
         private void cancelChange(){
-            if (MODE.equals("PVP"))
+            if (MODE == GameMode.PVP)
                 rbtnPvE.setSelected(true);
-            else
+            else if (MODE == GameMode.PVE)
                 rbtnPvP.setSelected(true);
         }
     }
