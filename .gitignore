@@ -1,6 +1,7 @@
 Recursos usados.txt
 *.log
 README.md
+/javadoc
 
 ### IntelliJ IDEA ###
 out/

@@ -68,18 +68,38 @@ public class BoardModel {
         redTurn = !redTurn;
     }
 
+    /**
+     * Gets the width of the board.
+     *
+     * @return the width of the board, as an int.
+     */
     public int getWIDTH() {
         return WIDTH;
     }
 
+    /**
+     * Gets the height of the board.
+     *
+     * @return the height of the board, as an int.
+     */
     public int getHEIGHT() {
         return HEIGHT;
     }
 
+    /**
+     * Gets the current game mode. The default mode is GameMode.PVP.
+     *
+     * @return the game mode which is currently in use.
+     */
     public GameMode getGameMode() {
         return gameMode;
     }
 
+    /**
+     * Sets the game mode to the param one.
+     *
+     * @param gameMode the game mode to switch to.
+     */
     public void setGameMode(GameMode gameMode) {
         this.gameMode = gameMode;
     }
@@ -103,6 +123,11 @@ public class BoardModel {
         return null;
     }
 
+    /**
+     * Gets the index of a random column where it can be created a new Piece.
+     *
+     * @return a column with available space to put a Piece, as an int of its index (from 0 to WIDTH).
+     */
     public int getRandomAvailableColumn(){
         while(true){
             int column = (int) (Math.random() * WIDTH);

@@ -54,6 +54,7 @@ public class BoardPanelView extends JPanel {
         //Look and feel
         setLayout(new BorderLayout());
 
+        //Sets the menu bar at the top
         JMenuBar menuBar = new JMenuBar();
         FRAME.setJMenuBar(menuBar);
 
@@ -81,6 +82,7 @@ public class BoardPanelView extends JPanel {
         menuMode.add(rbtnPvP);
         menuMode.add(rbtnPvE);
 
+        //Creates the Board panel
         pnlBoard = new JPanel(
                 new MigLayout("wrap 7, fill", "[fill]", "[fill]"));
         for (int i = 0; i < 42; i++){
@@ -91,11 +93,12 @@ public class BoardPanelView extends JPanel {
         pnlBoard.setBackground(Color.decode("#005254"));
         add(pnlBoard, BorderLayout.CENTER);
 
+        //Creates the bottom panel where some info and buttons are displayed
         JPanel pnlBottom = new JPanel(new MigLayout("fill", "[grow 20][grow 80][]"));
         pnlBottom.setPreferredSize(new Dimension(400, 150));
         add(pnlBottom, BorderLayout.SOUTH);
 
-        JPanel pnlScores = new JPanel(new MigLayout("align 50% 50%, fill",
+        JPanel pnlScores = new JPanel(new MigLayout("align 50% 50%",
                 "", "[]20[]"));
         pnlBottom.add(pnlScores, "growx");
 
@@ -105,17 +108,17 @@ public class BoardPanelView extends JPanel {
         baseFont = lblRedScore.getFont().deriveFont(Font.PLAIN);
         boldBaseFont = baseFont.deriveFont(Font.BOLD);
 
-        pnlScores.add(lblRedScore, "wrap, alignx 50%, growx");
-        pnlScores.add(lblYellowScore, "alignx 50%, growx");
+        pnlScores.add(lblRedScore, "wrap, alignx 50%");
+        pnlScores.add(lblYellowScore, "alignx 50%");
 
-        JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%"));
-        pnlBottom.add(pnlInfo);
+        JPanel pnlInfo = new JPanel(new MigLayout());
+        pnlBottom.add(pnlInfo, "alignx 50%");
 
         lblInfo = new JLabel("Información: ");
         pnlInfo.add(lblInfo);
 
         JPanel pnlButton = new JPanel(
-                new MigLayout("aligny 50%", "", "[]30[]"));
+                new MigLayout("aligny 50%", "", "[]20[]"));
         pnlBottom.add(pnlButton);
 
         JButton btnResetGame = new JButton(RESET_GAME_TEXT);

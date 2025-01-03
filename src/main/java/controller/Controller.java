@@ -71,6 +71,12 @@ public class Controller {
         VIEW.resetAll();
     }
 
+    /**
+     * This method is called when the user changes the game mode from the current one. This method reset the board and
+     * the scores too.
+     *
+     * @param gameMode the GameMode to change into
+     */
     public void changeGameMode(GameMode gameMode){
         MODEL.setGameMode(gameMode);
         MODEL.resetAll();
