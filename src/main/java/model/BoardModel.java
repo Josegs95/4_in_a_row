@@ -12,6 +12,7 @@ public class BoardModel {
     final private int WIDTH = 7;
     final private int HEIGHT = 6;
 
+    private GameMode gameMode = GameMode.PVP;
     private boolean redTurn = true;
     private int redWins = 0;
     private int yellowWins = 0;
@@ -68,24 +69,73 @@ public class BoardModel {
     }
 
     /**
-     * Try to create a new piece in the same column of the index.
+     * Gets the width of the board.
      *
-     * @param index the index of the panel where the user clicked.
+     * @return the width of the board, as an int.
+     */
+    public int getWIDTH() {
+        return WIDTH;
+    }
+
+    /**
+     * Gets the height of the board.
+     *
+     * @return the height of the board, as an int.
+     */
+    public int getHEIGHT() {
+        return HEIGHT;
+    }
+
+    /**
+     * Gets the current game mode. The default mode is GameMode.PVP.
+     *
+     * @return the game mode which is currently in use.
+     */
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    /**
+     * Sets the game mode to the param one.
+     *
+     * @param gameMode the game mode to switch to.
+     */
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    /**
+     * Try to create a new piece in the same column of the targetColumn.
+     *
+     * @param targetColumn the target column on which the new Piece will be created.
      * @return a new Piece object, or null if no more Pieces can be created in the column.
      */
-    public Piece createPieceAt(int index){
-        int x = index % WIDTH;
-
+    public Piece createPieceAt(int targetColumn){
         for (int i = HEIGHT - 1; i >= 0; i--){
-            if (BOARD[i][x] == null){
-                Piece piece = new Piece(redTurn ? Piece.PieceType.RED : Piece.PieceType.YELLOW, x, i);
-                BOARD[i][x] = piece;
+            if (BOARD[i][targetColumn] == null){
+                Piece piece = new Piece(redTurn ? Piece.PieceType.RED : Piece.PieceType.YELLOW, targetColumn, i);
+                BOARD[i][targetColumn] = piece;
 
                 return piece;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Gets the index of a random column where it can be created a new Piece.
+     *
+     * @return a column with available space to put a Piece, as an int of its index (from 0 to WIDTH).
+     */
+    public int getRandomAvailableColumn(){
+        while(true){
+            int column = (int) (Math.random() * WIDTH);
+            for (int i = 0; i < HEIGHT; i++){
+                if (BOARD[i][column] == null)
+                    return column;
+            }
+        }
     }
 
     /**

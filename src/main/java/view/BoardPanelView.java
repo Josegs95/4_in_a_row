@@ -2,15 +2,13 @@ package main.java.view;
 
 import main.java.controller.Controller;
 import main.java.model.BoardModel;
+import main.java.model.GameMode;
 import main.java.model.Piece;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Arrays;
 
 /**
@@ -26,9 +24,12 @@ public class BoardPanelView extends JPanel {
 
     private JPanel pnlBoard;
 
-    private JLabel lblRedWin;
-    private JLabel lblYellowWin;
+    private JLabel lblRedScore;
+    private JLabel lblYellowScore;
     private JLabel lblInfo;
+
+    private JRadioButton rbtnPvP;
+    private JRadioButton rbtnPvE;
 
     private Font baseFont;
     private Font boldBaseFont;
@@ -53,11 +54,14 @@ public class BoardPanelView extends JPanel {
         //Look and feel
         setLayout(new BorderLayout());
 
+        //Sets the menu bar at the top
         JMenuBar menuBar = new JMenuBar();
         FRAME.setJMenuBar(menuBar);
 
         JMenu menuGame = new JMenu("Partida");
+        JMenu menuOption = new JMenu("Opciones");
         menuBar.add(menuGame);
+        menuBar.add(menuOption);
 
         JMenuItem mnItemResetGame = new JMenuItem(RESET_GAME_TEXT);
         JMenuItem mnItemResetSession = new JMenuItem(RESET_SESSION_TEXT);
@@ -66,6 +70,19 @@ public class BoardPanelView extends JPanel {
         menuGame.add(mnItemResetSession);
         menuGame.add(mnItemExit);
 
+        JMenu menuMode = new JMenu("Modo");
+        menuOption.add(menuMode);
+
+        rbtnPvP = new JRadioButton("PvP");
+        rbtnPvE = new JRadioButton("PvE");
+        ButtonGroup btnGMode = new ButtonGroup();
+        btnGMode.add(rbtnPvP);
+        btnGMode.add(rbtnPvE);
+        rbtnPvP.setSelected(true);
+        menuMode.add(rbtnPvP);
+        menuMode.add(rbtnPvE);
+
+        //Creates the Board panel
         pnlBoard = new JPanel(
                 new MigLayout("wrap 7, fill", "[fill]", "[fill]"));
         for (int i = 0; i < 42; i++){
@@ -76,32 +93,33 @@ public class BoardPanelView extends JPanel {
         pnlBoard.setBackground(Color.decode("#005254"));
         add(pnlBoard, BorderLayout.CENTER);
 
-        JPanel pnlBottom = new JPanel(new BorderLayout());
+        //Creates the bottom panel where some info and buttons are displayed
+        JPanel pnlBottom = new JPanel(new MigLayout("fill", "[grow 20][grow 80][]"));
         pnlBottom.setPreferredSize(new Dimension(400, 150));
         add(pnlBottom, BorderLayout.SOUTH);
 
-        JPanel pnlResult = new JPanel(new MigLayout("insets 0 30 0, aligny center",
+        JPanel pnlScores = new JPanel(new MigLayout("align 50% 50%",
                 "", "[]20[]"));
-        pnlBottom.add(pnlResult, BorderLayout.WEST);
+        pnlBottom.add(pnlScores, "growx");
 
-        lblRedWin = new JLabel();
-        lblYellowWin = new JLabel();
+        lblRedScore = new JLabel("", SwingConstants.CENTER);
+        lblYellowScore = new JLabel("", SwingConstants.CENTER);
 
-        baseFont = lblRedWin.getFont().deriveFont(Font.PLAIN);
+        baseFont = lblRedScore.getFont().deriveFont(Font.PLAIN);
         boldBaseFont = baseFont.deriveFont(Font.BOLD);
 
-        pnlResult.add(lblRedWin, "wrap");
-        pnlResult.add(lblYellowWin);
+        pnlScores.add(lblRedScore, "wrap, alignx 50%");
+        pnlScores.add(lblYellowScore, "alignx 50%");
 
-        JPanel pnlInfo = new JPanel(new MigLayout("align 50% 50%"));
-        pnlBottom.add(pnlInfo, BorderLayout.CENTER);
+        JPanel pnlInfo = new JPanel(new MigLayout());
+        pnlBottom.add(pnlInfo, "alignx 50%");
 
         lblInfo = new JLabel("Información: ");
         pnlInfo.add(lblInfo);
 
         JPanel pnlButton = new JPanel(
-                new MigLayout("aligny 50%", "", "[]30[]"));
-        pnlBottom.add(pnlButton, BorderLayout.EAST);
+                new MigLayout("aligny 50%", "", "[]20[]"));
+        pnlBottom.add(pnlButton);
 
         JButton btnResetGame = new JButton(RESET_GAME_TEXT);
         JButton btnResetWinCount = new JButton(RESET_SESSION_TEXT);
@@ -119,6 +137,9 @@ public class BoardPanelView extends JPanel {
 
         btnResetWinCount.addActionListener(hardResetListener);
         mnItemResetSession.addActionListener(hardResetListener);
+
+        rbtnPvP.addActionListener(new ChoosingModeActionListener(GameMode.PVP));
+        rbtnPvE.addActionListener(new ChoosingModeActionListener(GameMode.PVE));
 
         menuGame.setMnemonic(KeyEvent.VK_P);
         mnItemResetGame.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK));
@@ -199,17 +220,23 @@ public class BoardPanelView extends JPanel {
 
     private void updateTurn(){
         if (MODEL.isRedTurn()) {
-            lblRedWin.setFont(boldBaseFont);
-            lblYellowWin.setFont(baseFont);
+            lblRedScore.setFont(boldBaseFont);
+            lblYellowScore.setFont(baseFont);
         } else {
-            lblYellowWin.setFont(boldBaseFont);
-            lblRedWin.setFont(baseFont);
+            lblYellowScore.setFont(boldBaseFont);
+            lblRedScore.setFont(baseFont);
         }
     }
 
     private void updateScores(){
-        lblRedWin.setText("Rojo: " + MODEL.getRedWins());
-        lblYellowWin.setText("Amarillo: " + MODEL.getYellowWins());
+        GameMode gameMode = MODEL.getGameMode();
+        if (gameMode == GameMode.PVE){
+            lblRedScore.setText("Rojo (Tú): " + MODEL.getRedWins());
+            lblYellowScore.setText("Amarillo (IA): " + MODEL.getYellowWins());
+        } else if (gameMode == GameMode.PVP){
+            lblRedScore.setText("Rojo: " + MODEL.getRedWins());
+            lblYellowScore.setText("Amarillo: " + MODEL.getYellowWins());
+        }
     }
 
     private class BoardMouseListener extends MouseAdapter{
@@ -217,15 +244,77 @@ public class BoardPanelView extends JPanel {
         public void mouseClicked(MouseEvent e) {
             if (pnlBoard.isEnabled()){
                 int index = Arrays.asList(pnlBoard.getComponents()).indexOf(e.getComponent());
-                int response = controller.panelWasClicked(index);
+                int targetColumn = index % MODEL.getWIDTH();
+                int response = controller.panelWasClicked(targetColumn);
                 if (response == -1)
                     return;
 
                 printBoard();
 
+                if (response == 1) {
+                    setWinner();
+                    return;
+                }
+
+                if (MODEL.getGameMode() == GameMode.PVE){
+                    pnlBoard.setEnabled(false);
+                    createRandomPiece();
+                }
+            }
+        }
+
+        private void createRandomPiece(){
+            new Thread(() -> {
+                try{
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                int response = controller.panelWasClicked(MODEL.getRandomAvailableColumn());
+
+                printBoard();
+                pnlBoard.setEnabled(true);
+
                 if (response == 1)
                     setWinner();
+            }).start();
+        }
+    }
+
+    private class ChoosingModeActionListener implements ActionListener{
+
+        final private GameMode MODE;
+
+        ChoosingModeActionListener(GameMode gameMode){
+            this.MODE = gameMode;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (MODE == MODEL.getGameMode()) {
+                cancelChange();
+                return;
             }
+
+            int option = JOptionPane.showConfirmDialog(FRAME,
+                    "Se va a reiniciar el tablero y los marcadores para activar el modo " + MODE + ". ¿Estás seguro?",
+                    "Activar modo " + MODE,
+                    JOptionPane.YES_NO_OPTION);
+
+            if (option == JOptionPane.NO_OPTION) {
+                cancelChange();
+                return;
+            }
+
+            controller.changeGameMode(MODE);
+        }
+
+        private void cancelChange(){
+            if (MODE == GameMode.PVP)
+                rbtnPvE.setSelected(true);
+            else if (MODE == GameMode.PVE)
+                rbtnPvP.setSelected(true);
         }
     }
 }
