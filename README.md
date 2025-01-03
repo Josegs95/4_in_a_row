@@ -11,7 +11,10 @@ be played againsts another player (PvP). Each time a player wins, the score of t
 <h2>TO-DO list:</h2>
 <small><em>Optional</em></small>
 <ul>
-  <li>Play alone, vs randomess (almost fully implemented)</li>
-  <li>Can save state of a session into a file, and load it</li>
+  <li>Add some images to this file</li>
 </ul>
 
+<h2>Known issues</h2>
+<ul>
+  <li>The middle message in the BoardPanelView (with the text of "Información") moves each time the turn changes, because some label on the left set its style to bold. I have tried to fix this but I couldn't do it. If you know how to fix it (I don't want to put absolute size to the components), feel free to do a pull request!.</li>
+</ul>
