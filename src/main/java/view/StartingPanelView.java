@@ -76,12 +76,12 @@ public class StartingPanelView extends JPanel {
     }
 
     private String getMessageToUser(){
-        return "¡Hola!, espero que disfrutes del juego que he diseñado. El juego es muy simple así que resumiré sus reglas:" +
+        return "¡Hola!, espero que disfrutes de la aplicación que he diseñado. Resumiré las reglas del juego:" +
                 "<br><ol>" +
-                "<li>Se juega con dos jugadores, uno contra el otro.</li>" +
+                "<li>Juegan dos jugadores, uno contra el otro. También existe modo PvE contra la IA.</li>" +
                 "<li>Empieza siempre las fichas rojas.</li>" +
                 "<li>Gana quien primero consiga un 4 en raya.</li>" +
-                "<li>Puedes reiniciar la partida solo o la partida y contadores de victorias.</li>" +
+                "<li>Puedes reiniciar el tablero; o el tablero y los contadores de victorias.</li>" +
                 "<ol>";
     }
 }
