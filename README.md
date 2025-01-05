@@ -16,10 +16,10 @@ be played againsts another player (PvP). Each time a player wins, the score of t
 <h2>Images:</h2>
 <details>
   <summary>Show/Hide</summary>
-  <img src="https://github.com/user-attachments/assets/2ca12356-39e7-45a1-baa7-4180d3168229" width="500" height=464>
-  <img src="https://github.com/user-attachments/assets/af50108f-fc95-4027-b8b4-47b7c6112d44" width="500" height=464>
-  <img src="https://github.com/user-attachments/assets/e8e17180-0578-4ed7-8b82-39e69cb54ff3" width="500" height=464>
-  <img src="https://github.com/user-attachments/assets/c6f29185-c53f-4930-9429-dfc47d4b99a5" width="500" height=464>
+  <img src="https://github.com/user-attachments/assets/2ca12356-39e7-45a1-baa7-4180d3168229" width="500" height=464 alt="Starting window of the app">
+  <img src="https://github.com/user-attachments/assets/af50108f-fc95-4027-b8b4-47b7c6112d44" width="500" height=464 alt="A window showing a started game">
+  <img src="https://github.com/user-attachments/assets/e8e17180-0578-4ed7-8b82-39e69cb54ff3" width="500" height=464 alt="A window pop-up informing that a player has won">
+  <img src="https://github.com/user-attachments/assets/c6f29185-c53f-4930-9429-dfc47d4b99a5" width="500" height=464 alt="A window asking the user if they are sure to switch to   pve mode">
 </details>
 
 <h2>Known issues</h2>
